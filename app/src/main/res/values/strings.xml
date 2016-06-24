@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Pointing App</string>
+    <string name="title_activity_main">Pointing App</string>
+	<string name="namelabel">"Name : "</string>
+    <string name="fill_field">Please fill all fields</string>
+    <string name="already_exist">This email already exist !!</string>
+    <string name="sgl_already_exist">There is a SGL already exist for this group!!</string>
+    <string name="please_select">Please select an activity !!</string>
+    <string name="success">Activity added successfully </string>
+    <string name="wrong_login">Wrong email or password !!</string>
+
+    <string name="action_add_activity">Add Activity</string>
+    <string name="action_my_activities">My Activities</string>
+    <string name="action_leader_board">Leaderboard</string>
+    <string name="my_prefs">MyPrefs</string>
+
+    <string-array name="items">
+        <item>Select an activity</item>
+        <item>Posted a question on Udacity forum(1 Pt)</item>
+        <item>Posted an answer to Udacity forum(3 Pt)</item>
+        <item>Help a teammate on Slack(2 Pt)</item>
+        <item>Delivered assignments(4 Pt)</item>
+        <item>Finished lesson on time(5 Pt)</item>
+        <item>Appointment with Udacity coaches(2 Pt)</item>
+    </string-array>
+
+</resources>

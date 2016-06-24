@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "331017802729",
+    "firebase_url": "https://pointingapp-11896.firebaseio.com",
+    "project_id": "pointingapp-11896",
+    "storage_bucket": "pointingapp-11896.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331017802729:android:fcdcf00713bb5f75",
+        "android_client_info": {
+          "package_name": "com.example.kemos.pointingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331017802729-8ma89j5hnsecs885p1c6os5urf7rjbig.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCF8GuSbs6ll_A63brVmO3iHBjbPn6Btik"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
