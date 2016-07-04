@@ -31,24 +31,21 @@ public class FirebaseOperation {
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     }
 
-    public void addUser(String userName, String userEmail , String studyGroup , String password,String userType) {
+    public void addUser(String userName , String studyGroup , String password,String userType) {
 
         Map<String, String> user = new HashMap<String, String>();
-        user.put("userName", userName);
-        user.put("userEmail", userEmail);
         user.put("studyGroup", studyGroup);
         user.put("password", password);
-        if ( userType.equals("users"))
+        if ( userType.equals("student"))
         user.put("userPoints", "0");
-        mDatabase.child(userType).push().setValue(user);
+        mDatabase.child(userType).child(userName).setValue(user);
 
 
     }
 
-    public void addActivity(String userId, String userName, String activityURL, String activityType, String point,String studyGroup) {
+    public void addActivity( String userName, String activityURL, String activityType, String point,String studyGroup) {
 
         Map<String, String> activity = new HashMap<String, String>();
-        activity.put("userId", userId);
         activity.put("userName", userName);
         activity.put("activityURL", activityURL);
         activity.put("activityType", activityType);
@@ -59,7 +56,7 @@ public class FirebaseOperation {
         mDatabase.child("activities").push().setValue(activity);
     }
 
-    public void updateStatusActivity( String activityId , final String userId   , String point, String status , boolean check) {
+    public void updateStatusActivity( String activityId   , final String userName , String point, String status , boolean check) {
         added = check;
         Map<String, Object> activity = new HashMap<String, Object>();
         activity.put("status", status);
@@ -67,7 +64,7 @@ public class FirebaseOperation {
 
         if (status.equals("Approved")) {
             tmpPoint = Integer.parseInt(point);
-            mDatabase.child("users").child(userId).addValueEventListener(new ValueEventListener() {
+            mDatabase.child("student").child(userName).addValueEventListener(new ValueEventListener() {
                  @Override
                  public void onDataChange(DataSnapshot dataSnapshot) {
                      User user = dataSnapshot.getValue(User.class);
@@ -77,7 +74,7 @@ public class FirebaseOperation {
                          added = true;
                          Map<String, Object> u = new HashMap<String, Object>();
                          u.put("userPoints", String.valueOf(tmpPoint));
-                         mDatabase.child("users").child(userId).updateChildren(u);
+                         mDatabase.child("student").child(userName).updateChildren(u);
                      }
                  }
 

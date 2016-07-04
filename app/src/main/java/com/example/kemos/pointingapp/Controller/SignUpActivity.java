@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.kemos.pointingapp.Model.CheckDeviceStatus;
 import com.example.kemos.pointingapp.Model.FirebaseOperation;
 import com.example.kemos.pointingapp.R;
 import com.example.kemos.pointingapp.Model.User;
@@ -31,36 +32,39 @@ public class SignUpActivity extends AppCompatActivity {
     ArrayList<User> arrayUsers = new ArrayList<User>();
     SharedPreferences.Editor editor;
     private DatabaseReference mDatabase;
-    boolean userAdded =  false ;
-    EditText userName , userPassword , studyGroup , userEmail;
+    EditText userName , userPassword , studyGroup ;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_activity);
-        firebaseOperation = new FirebaseOperation(getApplicationContext()) ;
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
-        editor = sharedpreferences.edit();
-        userType = sharedpreferences.getString("userType",null);
+        if (!CheckDeviceStatus.isNetworkAvailable(getApplicationContext()))
+            Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_LONG).show();
+        else {
 
-        getUsers();
-        Button signUpBtn = (Button) findViewById(R.id.signupBtn);
+            firebaseOperation = new FirebaseOperation(getApplicationContext());
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+            editor = sharedpreferences.edit();
+            userType = sharedpreferences.getString("userType", null);
 
-        userName = (EditText) findViewById(R.id.userName);
-        userEmail = (EditText) findViewById(R.id.userEmail);
-        studyGroup = (EditText) findViewById(R.id.studyGroup);
-        userPassword = (EditText) findViewById(R.id.password);
+            getUsers();
+            Button signUpBtn = (Button) findViewById(R.id.signupBtn);
 
-        firebaseOperation = new FirebaseOperation(this);
-        sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+            userName = (EditText) findViewById(R.id.userName);
+            studyGroup = (EditText) findViewById(R.id.studyGroup);
+            userPassword = (EditText) findViewById(R.id.password);
 
-        signUpBtn.setOnClickListener(onButtonClick);
+            firebaseOperation = new FirebaseOperation(this);
+            sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+
+            signUpBtn.setOnClickListener(onButtonClick);
+        }
    }
 
 
-    public boolean checkUser(String userEmail  ) {
+    public boolean checkUser(String userName  ) {
         for ( int i = 0 ;i < arrayUsers.size() ; i++ )
-            if ( userEmail.equals(arrayUsers.get(i).getUserEmail()) )
+            if ( userName.equals(arrayUsers.get(i).getUserName()) )
                 return true;
 
         return false ;
@@ -85,12 +89,7 @@ public class SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 User user = snapshot.getValue(User.class);
-                                if ( userAdded ) {
-                                    editor.putString("UserId", mapEntry.getKey());
-                                    userAdded = false ;
-                                }
-                                editor.commit();
-                                user.setUserId( mapEntry.getKey());
+                                user.setUserName(mapEntry.getKey());
                                 arrayUsers.add(user);
 
                             }
@@ -115,45 +114,53 @@ public class SignUpActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     String name = userName.getText().toString();
-                    String email = userEmail.getText().toString();
                     String group = studyGroup.getText().toString();
                     String password = userPassword.getText().toString();
 
                     switch (v.getId()) {
 
                         case R.id.signupBtn: {
+                            if (!CheckDeviceStatus.isNetworkAvailable(getApplicationContext()))
+                                Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_LONG).show();
+                            else {
 
-                            if (name.length() > 0  && email.length() > 0  && password.length() > 0 && group.length() > 0 ) {
-                         //       if ( email.indexOf("@") != -1 || email.indexOf(".") != -1 || email.indexOf("@") > email.indexOf(".") )
-                                if (checkUser(email)) {
-                                    userName.setText("");
-                                    userEmail.setText("");
-                                    studyGroup.setText("");
-                                    userPassword.setText("");
-                                    Toast.makeText(getApplicationContext(), R.string.already_exist, Toast.LENGTH_LONG).show();
-                                }
-                                else if ( userType.equals("SGL") && checkSGL(group) )
-                                    Toast.makeText(getApplicationContext(), R.string.sgl_already_exist, Toast.LENGTH_LONG).show();
-                                else {
-                                    SharedPreferences.Editor editor = sharedpreferences.edit();
-                                    firebaseOperation.addUser(name, email, group, password,userType);
-                                    editor.putString("UserName", name);
-                                    editor.putString("StudyGroup", group);
-                                    editor.commit();
-                                    userAdded = true ;
-                                    if (  userType.equals("SGL") )
-                                        startActivity(new Intent(SignUpActivity.this, SGLHome.class));
-                                    else
-                                    startActivity(new Intent(SignUpActivity.this, AddActivity.class));
-                                }
-                            } else
-                                Toast.makeText(getApplicationContext(), R.string.fill_field, Toast.LENGTH_LONG).show();
+                                if (name.length() > 0 && password.length() > 0 && group.length() > 0) {
+                                    if ( !isValidName(name))
+                                        Toast.makeText(getApplicationContext(), R.string.invalid_user_name, Toast.LENGTH_LONG).show();
 
-                            break;
-                        }
+                                    else if (checkUser(name)) {
+                                        userName.setText("");
+                                        studyGroup.setText("");
+                                        userPassword.setText("");
+                                        Toast.makeText(getApplicationContext(), R.string.already_exist, Toast.LENGTH_LONG).show();
+                                    } else if (userType.equals("SGL") && checkSGL(group))
+                                        Toast.makeText(getApplicationContext(), R.string.sgl_already_exist, Toast.LENGTH_LONG).show();
+                                    else {
+                                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                                        firebaseOperation.addUser(name, group, password, userType);
+                                        editor.putString("UserName", name);
+                                        editor.putString("StudyGroup", group);
+                                        editor.commit();
+                                        if (userType.equals("SGL"))
+                                            startActivity(new Intent(SignUpActivity.this, SGLHome.class));
+                                        else
+                                            startActivity(new Intent(SignUpActivity.this, StudentHome.class));
+                                    }
+                                } else
+                                    Toast.makeText(getApplicationContext(), R.string.fill_field, Toast.LENGTH_LONG).show();
+                            }
+                                break;
+                            }
+
 
                     }
                 }
         };
+        boolean isValidName(String name) {
+            if ( name.indexOf(',') != -1 ||  name.indexOf('#') != -1 || name.indexOf('$') != -1 ||
+                    name.indexOf('[') != -1 || name.indexOf(']') != -1  )
+                return false ;
+            return true ;
 
+        }
 }

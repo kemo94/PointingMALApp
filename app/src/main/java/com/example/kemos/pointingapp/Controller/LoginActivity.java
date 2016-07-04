@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.kemos.pointingapp.Model.CheckDeviceStatus;
 import com.example.kemos.pointingapp.Model.FirebaseOperation;
 import com.example.kemos.pointingapp.R;
 import com.example.kemos.pointingapp.Model.User;
@@ -31,37 +32,40 @@ public class LoginActivity extends AppCompatActivity {
     ArrayList<User> arrayUsers = new ArrayList<User>();
     SharedPreferences.Editor editor;
     private DatabaseReference mDatabase;
-    EditText userEmail , userPassword ;
+    EditText userName , userPassword ;
     String userType;
     @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+        if (!CheckDeviceStatus.isNetworkAvailable(getApplicationContext()))
+            Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_LONG).show();
+        else {
 
-        firebaseOperation = new FirebaseOperation(getApplicationContext()) ;
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+            firebaseOperation = new FirebaseOperation(getApplicationContext());
+            mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
-        editor = sharedpreferences.edit();
-        userType = sharedpreferences.getString("userType",null);
+            sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+            editor = sharedpreferences.edit();
+            userType = sharedpreferences.getString("userType", null);
 
-        getUsers();
-        Button signUpBtn = (Button) findViewById(R.id.signupBtn);
-        Button loginBtn = (Button) findViewById(R.id.loginBtn);
-        userEmail = (EditText) findViewById(R.id.userEmail);
-        userPassword = (EditText) findViewById(R.id.password);
+            getUsers();
+            Button signUpBtn = (Button) findViewById(R.id.signupBtn);
+            Button loginBtn = (Button) findViewById(R.id.loginBtn);
+            userName = (EditText) findViewById(R.id.userName);
+            userPassword = (EditText) findViewById(R.id.password);
 
-        firebaseOperation = new FirebaseOperation(this);
+            firebaseOperation = new FirebaseOperation(this);
 
-        signUpBtn.setOnClickListener(onButtonClick);
-        loginBtn.setOnClickListener(onButtonClick);
+            signUpBtn.setOnClickListener(onButtonClick);
+            loginBtn.setOnClickListener(onButtonClick);
+        }
    }
 
 
-    public boolean checkUser(String userEmail ,String userPassword ) {
+    public boolean checkUser(String userName ,String userPassword ) {
         for ( int i = 0 ;i < arrayUsers.size() ; i++ )
-            if ( userEmail.equals(arrayUsers.get(i).getUserEmail()) && userPassword.equals(arrayUsers.get(i).getPassword()) ) {
-                editor.putString("UserId" , arrayUsers.get(i).getUserId());
+            if ( userName.equals(arrayUsers.get(i).getUserName()) && userPassword.equals(arrayUsers.get(i).getPassword()) ) {
                 editor.putString("UserName", arrayUsers.get(i).getUserName());
                 editor.putString("StudyGroup", arrayUsers.get(i).getStudyGroup());
                 editor.commit();
@@ -83,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 User user = snapshot.getValue(User.class);
-                                user.setUserId( mapEntry.getKey());
+                                user.setUserName( mapEntry.getKey());
                                 arrayUsers.add(user);
 
                             }
@@ -107,34 +111,37 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onClick(View v) {
-                    String email = userEmail.getText().toString();
+                    String name = userName.getText().toString();
                     String password = userPassword.getText().toString();
 
-                    switch (v.getId()) {
+                    if (!CheckDeviceStatus.isNetworkAvailable(getApplicationContext()))
+                        Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_LONG).show();
+                    else {
+                        switch (v.getId()) {
 
-                        case R.id.signupBtn: {
-                            startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+                            case R.id.signupBtn: {
 
-                            break;
-                        }
+                                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
 
-                        case R.id.loginBtn: {
-                            if (email.length() > 0 && password.length() > 0) {
-                                if (checkUser(email, password)) {
-
-                                    if (userType.equals("SGL"))
-                                        startActivity(new Intent(LoginActivity.this, SGLHome.class));
-                                    else
-                                        startActivity(new Intent(LoginActivity.this, AddActivity.class));
-                                }
-                                else
-                                    Toast.makeText(getApplicationContext(), R.string.wrong_login, Toast.LENGTH_LONG).show();
-
+                                break;
                             }
-                            else
-                              Toast.makeText(getApplicationContext(), R.string.fill_field, Toast.LENGTH_LONG).show();
 
-                            break;
+                            case R.id.loginBtn: {
+                                if (name.length() > 0 && password.length() > 0) {
+                                    if (checkUser(name, password)) {
+
+                                        if (userType.equals("SGL"))
+                                            startActivity(new Intent(LoginActivity.this, SGLHome.class));
+                                        else
+                                            startActivity(new Intent(LoginActivity.this, StudentHome.class));
+                                    } else
+                                        Toast.makeText(getApplicationContext(), R.string.wrong_login, Toast.LENGTH_LONG).show();
+
+                                } else
+                                    Toast.makeText(getApplicationContext(), R.string.fill_field, Toast.LENGTH_LONG).show();
+
+                                break;
+                            }
                         }
                     }
                 }

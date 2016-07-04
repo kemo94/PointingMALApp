@@ -1,16 +1,17 @@
 package com.example.kemos.pointingapp.Controller;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.example.kemos.pointingapp.R;
 import com.example.kemos.pointingapp.Model.Activity;
+import com.example.kemos.pointingapp.R;
 import com.example.kemos.pointingapp.View.CustomListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,28 +20,44 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class MyActivities extends AppCompatActivity {
+public class MyActivities extends Fragment {
 
     SharedPreferences sharedpreferences;
     ArrayList<Activity> arrayActivities = new ArrayList<Activity>();
     static DatabaseReference mDatabase;
-    String userId ;
+    boolean check = false ;
+    String userName ;
     ListView listview;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.listview_item);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
-        userId = sharedpreferences.getString("UserId",null);
-        getActivities();
-         listview = (ListView) findViewById(R.id.list);
+
+        setHasOptionsMenu(true);
+
+
+        if ( !check )
+            Toast.makeText(getActivity(), R.string.no_activities, Toast.LENGTH_LONG).show();
    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.listview_item, container, false);
+
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            sharedpreferences = getActivity().getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+            userName = sharedpreferences.getString("UserName", null);
+            getActivities();
+            listview = (ListView) rootView.findViewById(R.id.list);
+
+        return rootView;
+    }
     public void getActivities() {
         mDatabase.child("activities").addValueEventListener(new ValueEventListener() {
             @Override
@@ -52,9 +69,11 @@ public class MyActivities extends AppCompatActivity {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Activity activity = dataSnapshot.getValue(Activity.class);
-                                if (activity.getUserId().equals(userId)) {
+                                if (activity.getUserName().equals(userName)) {
                                     arrayActivities.add(activity);
-                                    listview.setAdapter(new CustomListAdapter(getApplicationContext(), arrayActivities));
+
+                                    Collections.sort(arrayActivities);
+                                    listview.setAdapter(new CustomListAdapter(getActivity(), arrayActivities));
                                 }
 
                             }
@@ -73,33 +92,5 @@ public class MyActivities extends AppCompatActivity {
 
 
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.add_activity) {
-            startActivity(new Intent(this,AddActivity.class));
-            return true;
-        }
-        if (id == R.id.my_activities) {
-            startActivity(new Intent(this,MyActivities.class));
-            return true;
-        }
-        if (id == R.id.leader_board) {
-            startActivity(new Intent(this,Leaderboard.class));
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-
-    }
-
 
 }

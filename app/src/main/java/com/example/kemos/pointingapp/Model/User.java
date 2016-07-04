@@ -4,23 +4,13 @@ package com.example.kemos.pointingapp.Model;
  * Created by kemos on 4/23/2016.
  */
 public class User implements Comparable<User> {
-    String userId ;
     String userName ;
     String password ;
     String userPoints ;
     String studyGroup ;
-    String userEmail ;
 
-    public void setUserPoints(String userPoints) {
-        this.userPoints = userPoints;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getUserName() {
@@ -31,20 +21,12 @@ public class User implements Comparable<User> {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getUserPoints() {
         return userPoints;
     }
 
     public String getStudyGroup() {
         return studyGroup;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
     }
 
 

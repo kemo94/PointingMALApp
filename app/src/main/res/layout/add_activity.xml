@@ -10,10 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5">
-
-
-    </RelativeLayout>
-
+     </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -26,17 +23,19 @@
         android:orientation="vertical" >
 
         <Spinner
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/spinner"  />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/activity_url"
-        android:hint="Activity URL(optional)"
+        android:hint="Activity URL"
         android:lines="1"
         android:focusable="true"
         android:textColorHighlight="#eefff0"
+        android:inputType="textUri"
+        android:imeOptions="actionDone"
         android:textColorHint="#000000"/>
         <Button
             android:layout_width="match_parent"

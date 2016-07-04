@@ -3,17 +3,22 @@
 
     <string name="app_name">Pointing App</string>
     <string name="title_activity_main">Pointing App</string>
-	<string name="namelabel">"Name : "</string>
     <string name="fill_field">Please fill all fields</string>
-    <string name="already_exist">This email already exist !!</string>
+    <string name="already_exist">This user name already exist !!</string>
+    <string name="invalid_user_name">User name must not contain . , #, $, [ , or ] </string>
     <string name="sgl_already_exist">There is a SGL already exist for this group!!</string>
     <string name="please_select">Please select an activity !!</string>
     <string name="success">Activity added successfully </string>
-    <string name="wrong_login">Wrong email or password !!</string>
+    <string name="wrong_login">Wrong user name or password !!</string>
+    <string name="no_network">No network available!!</string>
+    <string name="no_activities">there is no activities yet</string>
+    <string name="invalid_url">invalid URL !!</string>
+    <string name="missing_url">Please put URL </string>
 
     <string name="action_add_activity">Add Activity</string>
     <string name="action_my_activities">My Activities</string>
     <string name="action_leader_board">Leaderboard</string>
+    <string name="action_signout">Sign Out</string>
     <string name="my_prefs">MyPrefs</string>
 
     <string-array name="items">

@@ -1,14 +1,18 @@
 package com.example.kemos.pointingapp.Controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.kemos.pointingapp.Model.Activity;
+import com.example.kemos.pointingapp.Model.CheckDeviceStatus;
 import com.example.kemos.pointingapp.R;
-import com.example.kemos.pointingapp.View.CustomSGLListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,17 +30,26 @@ public class SGLHome extends AppCompatActivity {
     SharedPreferences sharedpreferences;
     ArrayList<Activity> arrayActivities = new ArrayList<Activity>();
     static DatabaseReference mDatabase;
+    boolean check = false ;
     String studyGroup ;
     ListView listview;
+    SGLHomeFragment sglfragment;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.listview_item);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
-        studyGroup = sharedpreferences.getString("StudyGroup",null);
-        getActivities();
-        listview = (ListView) findViewById(R.id.list);
+        setContentView(R.layout.sgl_home_activity);
+        if (!CheckDeviceStatus.isNetworkAvailable(getApplicationContext()))
+            Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_LONG).show();
+        else {
+             sglfragment =(SGLHomeFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
+
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+            studyGroup = sharedpreferences.getString("StudyGroup", null);
+            getActivities();
+            listview = (ListView) findViewById(R.id.list);
+
+        }
    }
 
     public boolean checkActivity(String activityId  , Activity activity  ) {
@@ -59,11 +72,11 @@ public class SGLHome extends AppCompatActivity {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Activity activity = dataSnapshot.getValue(Activity.class);
                                 activity.setActivityId(mapEntry.getKey());
-                                if (activity.getStudyGroup().equals(studyGroup) && !checkActivity(mapEntry.getKey() , activity) )
+                                if (activity.getStudyGroup().equals(studyGroup) && !checkActivity(mapEntry.getKey(), activity))
                                     arrayActivities.add(activity);
 
                                 Collections.sort(arrayActivities);
-                                listview.setAdapter(new CustomSGLListAdapter(getApplicationContext(), arrayActivities));
+                                sglfragment.setActivities(arrayActivities);
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
@@ -77,7 +90,29 @@ public class SGLHome extends AppCompatActivity {
 
             }
         });
+        if ( !check )
+            Toast.makeText(getApplicationContext(), R.string.no_activities, Toast.LENGTH_LONG).show();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.sgl_menu, menu);
 
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.signout) {
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.clear();
+            editor.commit();
+            startActivity(new Intent(this,UserTypeActivity.class));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
 
     }
 

@@ -1,10 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/add_activity" android:title="@string/action_add_activity"
-        android:orderInCategory="100" app:showAsAction="always" />
-    <item android:id="@+id/my_activities" android:title="@string/action_my_activities"
-        android:orderInCategory="100" app:showAsAction="always" />
-    <item android:id="@+id/leader_board" android:title="@string/action_leader_board"
-        android:orderInCategory="100" app:showAsAction="always" />
+
+    <item android:id="@+id/signout" android:title="@string/action_signout"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

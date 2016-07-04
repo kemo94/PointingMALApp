@@ -26,18 +26,11 @@
             android:hint="Name"
             android:lines="1"
             android:focusable="true"
+            android:inputType="textPersonName"
+            android:imeOptions="actionNext"
             android:textColorHighlight="#eefff0"
             android:textColorHint="#000000" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/userEmail"
-            android:hint="Email"
-            android:lines="1"
-            android:focusable="true"
-            android:textColorHighlight="#eefff0"
-            android:textColorHint="#000000"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -45,6 +38,8 @@
             android:hint="Study Group"
             android:lines="1"
             android:focusable="true"
+            android:inputType="text"
+            android:imeOptions="actionNext"
             android:textColorHighlight="#eefff0"
             android:textColorHint="#000000" />
 
@@ -57,6 +52,7 @@
         android:focusable="true"
         android:textColorHighlight="#eefff0"
         android:textColorHint="#000000"
+        android:imeOptions="actionDone"
         android:inputType="textPassword" />
         <Button
 

@@ -1,12 +1,12 @@
 package com.example.kemos.pointingapp.Controller;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.kemos.pointingapp.Model.User;
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Leaderboard extends AppCompatActivity {
+public class Leaderboard extends Fragment {
 
     ArrayList<User> arrayUsers = new ArrayList<User>();
     ListView listview;
@@ -34,33 +34,42 @@ public class Leaderboard extends AppCompatActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.listview_item);
+        setHasOptionsMenu(true);
+   }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.listview_item, container, false);
+
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
-        studyGroup = sharedpreferences.getString("StudyGroup",null);
+        sharedpreferences = getActivity().getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
+        studyGroup = sharedpreferences.getString("StudyGroup", null);
 
         getUsers();
 
-        listview = (ListView) findViewById(R.id.list);
-   }
+        listview = (ListView) rootView.findViewById(R.id.list);
 
+        return rootView;
+    }
     public void getUsers( ){
 
-        mDatabase.child("users").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("student").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> td = (HashMap<String, Object>) dataSnapshot.getValue();
                 if (td != null)
                     for (final Map.Entry<String, Object> mapEntry : td.entrySet()) {
-                        mDatabase.child("users").child(mapEntry.getKey()).addValueEventListener(new ValueEventListener() {
+                        mDatabase.child("student").child(mapEntry.getKey()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 User user = snapshot.getValue(User.class);
-                                user.setUserId( mapEntry.getKey());
+                                user.setUserName( mapEntry.getKey());
                                 if ( user.getStudyGroup().equals(studyGroup))
                                 arrayUsers.add(user);
                                 Collections.sort(arrayUsers);
-                                listview.setAdapter(new CustomLeaderboardAdapter(getApplicationContext(), arrayUsers));
+                                listview.setAdapter(new CustomLeaderboardAdapter(getActivity(), arrayUsers));
                             }
 
                             @Override
@@ -79,33 +88,6 @@ public class Leaderboard extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.add_activity) {
-            startActivity(new Intent(this,AddActivity.class));
-            return true;
-        }
-        if (id == R.id.my_activities) {
-            startActivity(new Intent(this,MyActivities.class));
-            return true;
-        }
-        if (id == R.id.leader_board) {
-            startActivity(new Intent(this,Leaderboard.class));
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-
-    }
 
 
 }

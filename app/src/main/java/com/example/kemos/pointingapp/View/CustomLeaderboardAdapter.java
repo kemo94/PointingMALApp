@@ -38,7 +38,7 @@ public class CustomLeaderboardAdapter extends BaseAdapter {
             userName.setText(userItemArray.get(position).getUserName());
 
             TextView userPoint = (TextView) convertView.findViewById(R.id.userPoint);
-            userPoint.setText(userItemArray.get(position).getUserPoints());
+            userPoint.setText(userItemArray.get(position).getUserPoints() + " pts");
 
             return convertView;
     }
@@ -50,7 +50,7 @@ public class CustomLeaderboardAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return userItemArray.get(position).getUserEmail();
+        return userItemArray.get(position).getUserName();
     }
 
     @Override
