@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.kemos.pointingapp.Model.Activity;
@@ -30,10 +30,9 @@ public class SGLHome extends AppCompatActivity {
     SharedPreferences sharedpreferences;
     ArrayList<Activity> arrayActivities = new ArrayList<Activity>();
     static DatabaseReference mDatabase;
-    boolean check = false ;
     String studyGroup ;
-    ListView listview;
     SGLHomeFragment sglfragment;
+    private Toolbar toolbar;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,7 +46,12 @@ public class SGLHome extends AppCompatActivity {
             sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
             studyGroup = sharedpreferences.getString("StudyGroup", null);
             getActivities();
-            listview = (ListView) findViewById(R.id.list);
+
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         }
    }
@@ -72,7 +76,7 @@ public class SGLHome extends AppCompatActivity {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Activity activity = dataSnapshot.getValue(Activity.class);
                                 activity.setActivityId(mapEntry.getKey());
-                                if (activity.getStudyGroup().equals(studyGroup) && !checkActivity(mapEntry.getKey(), activity))
+                                if (activity.getStudyGroup().equals(studyGroup) && !checkActivity(mapEntry.getKey() , activity) )
                                     arrayActivities.add(activity);
 
                                 Collections.sort(arrayActivities);
@@ -90,8 +94,6 @@ public class SGLHome extends AppCompatActivity {
 
             }
         });
-        if ( !check )
-            Toast.makeText(getApplicationContext(), R.string.no_activities, Toast.LENGTH_LONG).show();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

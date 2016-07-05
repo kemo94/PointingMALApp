@@ -6,27 +6,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.kemos.pointingapp.Model.Activity;
 import com.example.kemos.pointingapp.R;
+import com.example.kemos.pointingapp.View.CustomSGLListAdapter;
 
 import java.util.ArrayList;
 
 
 public class SGLHomeFragment extends Fragment {
 
-    ArrayList<Activity> arrayActivities = new ArrayList<Activity>();
-    boolean check = false ;
-    String studyGroup ;
     ListView listview;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        if ( !check )
-            Toast.makeText(getActivity(), R.string.no_activities, Toast.LENGTH_LONG).show();
    }
 
     @Override
@@ -39,7 +34,7 @@ public class SGLHomeFragment extends Fragment {
         return rootView;
     }
     public void setActivities( ArrayList<Activity> arrayActivities){
-        this.arrayActivities = arrayActivities ;
+        listview.setAdapter(new CustomSGLListAdapter(getActivity(), arrayActivities));
 
     }
 }

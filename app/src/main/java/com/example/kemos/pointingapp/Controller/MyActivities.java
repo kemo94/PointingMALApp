@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.kemos.pointingapp.Model.Activity;
 import com.example.kemos.pointingapp.R;
@@ -30,7 +29,6 @@ public class MyActivities extends Fragment {
     SharedPreferences sharedpreferences;
     ArrayList<Activity> arrayActivities = new ArrayList<Activity>();
     static DatabaseReference mDatabase;
-    boolean check = false ;
     String userName ;
     ListView listview;
 	@Override
@@ -39,9 +37,6 @@ public class MyActivities extends Fragment {
 
         setHasOptionsMenu(true);
 
-
-        if ( !check )
-            Toast.makeText(getActivity(), R.string.no_activities, Toast.LENGTH_LONG).show();
    }
 
     @Override

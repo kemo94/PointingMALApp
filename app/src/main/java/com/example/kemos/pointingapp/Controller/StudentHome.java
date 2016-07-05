@@ -35,8 +35,6 @@ public class StudentHome extends AppCompatActivity {
         if (!CheckDeviceStatus.isNetworkAvailable(getApplicationContext()))
             Toast.makeText(getApplicationContext(), R.string.no_network, Toast.LENGTH_LONG).show();
         else {
-
-
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             sharedpreferences = getSharedPreferences(String.valueOf(R.string.my_prefs), Context.MODE_PRIVATE);
